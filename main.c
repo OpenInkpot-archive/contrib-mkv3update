@@ -121,12 +121,12 @@ const layout_t* get_layout(const char* layout_name)
 #define BLOCK_SIZE MEGABYTE
 #define HEADER_LEN 76
 
-typedef struct{
-	char version[32];
-	char vendor[40];
-	uint32_t data_blocks;
-	unsigned char md5_sums[(BLOCK_SIZE - HEADER_LEN) / 16][16];
-	unsigned char padding[(BLOCK_SIZE - HEADER_LEN) % 16];
+typedef struct {
+  char version[32];
+  char vendor[40];
+  uint32_t data_blocks;
+  unsigned char md5_sums[(BLOCK_SIZE - HEADER_LEN) / 16][16];
+  unsigned char padding[(BLOCK_SIZE - HEADER_LEN) % 16];
 } __attribute__((packed)) block0_t;
 
 
