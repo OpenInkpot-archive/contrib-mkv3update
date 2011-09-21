@@ -3,8 +3,8 @@
  *
  * Part of OpenInkpot project (http://openinkpot.org/)
  *
- * (c) 2007 Yauhen Kharuzhy <jekhor@gmail.com>
- * (c) 2008 Mikhail Gusarov <dottedmag@dottedmag.net>
+ * Copyright © 2007 Yauhen Kharuzhy <jekhor@gmail.com>
+ * Copyright © 2008-2009 Mikhail Gusarov <dottedmag@dottedmag.net>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -42,7 +42,7 @@ typedef struct
   int size; /* in blocks */
 } partition_t;
 
-const partition_t v3_orig_partitions[] = 
+const partition_t v3_orig_partitions[] =
 {
   /* 0th block is the badblocks remapping space */
   { "kernel", "zImage", 1, 1 },
@@ -72,7 +72,7 @@ typedef struct
   const size_t npartitions;
 } layout_t;
 
-const layout_t layouts[] = 
+const layout_t layouts[] =
 {
   {
     "OpenInkpot V3 firmware", "oi", 64,
@@ -91,12 +91,12 @@ const size_t nlayouts = sizeof(layouts) / sizeof(layout_t);
 void describe_layout(const layout_t* layout)
 {
   int i;
-  
+
   printf("%s layout\n", layout->name);
   printf("Flash size: %d mb\n\n", layout->size);
   printf("offset   size  label      description\n");
   printf("  0 mb   1 mb  -- bad blocks remapping space --\n");
-  
+
   for(i = 0; i < layout->npartitions; ++i)
   {
     printf("%3d mb %3d mb  %-10s %s\n",
@@ -153,7 +153,7 @@ int put_file_to_image(const partition_t* partition,
   char* buf;
   struct stat stat_info;
   off_t file_size;
-  
+
   printf("Writing %s to partition %s from block %d...\n",
          partition_filename,
          partition->name,
@@ -191,13 +191,13 @@ int put_file_to_image(const partition_t* partition,
   }
 
   memcpy(firmware + partition->offset * BLOCK_SIZE, buf, file_size);
-  
+
   if(-1 == munmap(buf, file_size))
   {
     perror("munmap");
     return 1;
   }
-  
+
   if(-1 == close(f))
   {
     perror("close");
@@ -305,7 +305,7 @@ int build_firmware(const layout_t* layout,
   for(i = 0; i < layout->npartitions; ++i)
   {
     const partition_t* partition = layout->partitions + i;
-    
+
     if(i < nfiles)
     {
       res = put_file_to_image(partition, firmware, filenames[i]);
@@ -334,32 +334,32 @@ int build_firmware(const layout_t* layout,
     perror("munmap");
     return 1;
   }
-  
+
   if(ftruncate(firmware_fd, firmware_end_block * BLOCK_SIZE) == -1)
   {
     perror("ftruncate");
     return 1;
   }
-  
+
   if(close(firmware_fd) == -1)
   {
     perror("close");
     return 1;
   }
-  
+
   return 0;
 }
 
 void usage(const char* progname)
 {
   int i, j;
-      
+
   printf("Hanlin v3 firmware builder.\n\nUsage:\n");
   printf("%s --describe-layout=(", progname);
   for(i = 0; i < nlayouts; ++i)
     printf("%s%s", i > 0 ? "|": "", layouts[i].tag);
   printf(")\n");
-      
+
   for(i = 0; i < nlayouts; ++i)
   {
     printf("%s --write-%s=<outfile>", progname, layouts[i].tag);
